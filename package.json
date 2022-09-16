@@ -24,7 +24,7 @@
     "preact": "^10.7.1"
   },
   "devDependencies": {
-    "videogata-plugin-typings": "../../../libraries/videogata-plugin-typings",
+    "videogata-plugin-typings": "git@gitlab.com:elijahgreen/videogata-plugin-typings.git",
     "parcel": "^2.5.0",
     "process": "^0.11.10",
     "typescript": "^4.6.3"
