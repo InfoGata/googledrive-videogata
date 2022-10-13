@@ -24,7 +24,7 @@
     "preact": "^10.7.1"
   },
   "devDependencies": {
-    "videogata-plugin-typings": "1.0.1",
+    "@infogata/videogata-plugin-typings": "1.0.2",
     "parcel": "^2.5.0",
     "process": "^0.11.10",
     "typescript": "^4.6.3"
