@@ -1,7 +1,7 @@
 {
   "id": "7bCIGEj1VK40kHZkBe416",
   "name": "Plugin for Google Drive",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Store and retrieve playlists from Google Drive",
   "script": "dist/index.js",
   "options": {
