@@ -1,4 +1,4 @@
-import axios from "axios";
+import ky from "ky";
 import { createEffect, createSignal } from "solid-js";
 import {
   Accordion,
@@ -30,12 +30,13 @@ const getToken = async (code: string, redirectUri: string) => {
   params.append("redirect_uri", redirectUri);
   params.append("grant_type", "authorization_code");
 
-  const result = await axios.post<TokenResponse>(TOKEN_SERVER, params, {
+  const result = await ky.post<TokenResponse>(TOKEN_SERVER, {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
-  });
-  return result.data;
+    body: params,
+  }).json();
+  return result;
 };
 
 const sendUiMessage = (message: UiMessageType) => {
