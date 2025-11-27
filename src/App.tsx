@@ -1,5 +1,5 @@
 import ky from "ky";
-import { createEffect, createSignal } from "solid-js";
+import { useState, useEffect } from "preact/hooks";
 import {
   Accordion,
   AccordionContent,
@@ -44,14 +44,14 @@ const sendUiMessage = (message: UiMessageType) => {
 };
 
 const App = () => {
-  const [isLoggedin, setIsLoggedin] = createSignal(false);
-  const [pluginId, setPluginId] = createSignal("");
-  const [redirectUri, setRedirectUri] = createSignal("");
-  const [useOwnKeys, setUseOwnKeys] = createSignal(false);
-  const [clientId, setClientId] = createSignal("");
-  const [clientSecret, setClientSecret] = createSignal("");
+  const [isLoggedin, setIsLoggedin] = useState(false);
+  const [pluginId, setPluginId] = useState("");
+  const [redirectUri, setRedirectUri] = useState("");
+  const [useOwnKeys, setUseOwnKeys] = useState(false);
+  const [clientId, setClientId] = useState("");
+  const [clientSecret, setClientSecret] = useState("");
 
-  createEffect(() => {
+  useEffect(() => {
     const onNewWindowMessage = (event: MessageEvent<MessageType>) => {
       switch (event.data.type) {
         case "login":
@@ -73,17 +73,17 @@ const App = () => {
     window.addEventListener("message", onNewWindowMessage);
     sendUiMessage({ type: "check-login" });
     return () => window.removeEventListener("message", onNewWindowMessage);
-  });
+  }, []);
 
   const onLogin = () => {
     const state = { pluginId: pluginId };
     const url = new URL(AUTH_URL);
-    if (useOwnKeys()) {
-      url.searchParams.append("client_id", clientId());
+    if (useOwnKeys) {
+      url.searchParams.append("client_id", clientId);
     } else {
       url.searchParams.append("client_id", CLIENT_ID);
     }
-    url.searchParams.append("redirect_uri", redirectUri());
+    url.searchParams.append("redirect_uri", redirectUri);
     url.searchParams.append("scope", AUTH_SCOPE);
     url.searchParams.append("response_type", "code");
     url.searchParams.append("state", JSON.stringify(state));
@@ -98,7 +98,7 @@ const App = () => {
       const code = url.searchParams.get("code");
 
       if (code) {
-        const response = await getToken(code, redirectUri());
+        const response = await getToken(code, redirectUri);
         sendUiMessage({
           type: "login",
           accessToken: response.access_token,
@@ -144,11 +144,11 @@ const App = () => {
   };
 
   const onSaveKeys = () => {
-    setUseOwnKeys(!!clientId());
+    setUseOwnKeys(!!clientId);
     sendUiMessage({
       type: "set-keys",
-      clientId: clientId(),
-      clientSecret: clientSecret(),
+      clientId: clientId,
+      clientSecret: clientSecret,
     });
   };
 
@@ -164,56 +164,56 @@ const App = () => {
   };
 
   return (
-    <div class="flex">
-      {isLoggedin() ? (
-        <div class="flex flex-col gap-2">
-          <div class="flex gap-2">
+    <div className="flex">
+      {isLoggedin ? (
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2">
             <Button onClick={onSavePlaylists}>Save Playlists</Button>
             <Button onClick={onLoadPlaylists}>Load Playlists</Button>
           </div>
-          <div class="flex gap-2">
+          <div className="flex gap-2">
             <Button onClick={onSavePlugins}>Save Plugins</Button>
             <Button onClick={onLoadPlugins}>Load Plugins</Button>
           </div>
-          <div class="flex gap-2">
+          <div className="flex gap-2">
             <Button onClick={onLogout}>Logout</Button>
           </div>
         </div>
       ) : (
         <div>
           <Button onClick={onLogin}>Login</Button>
-          <Accordion multiple collapsible>
+          <Accordion type="multiple">
             <AccordionItem value="item-1">
               <AccordionTrigger>
                 <p>Advanced Configuration</p>
               </AccordionTrigger>
 
               <AccordionContent>
-                <div class="flex flex-col gap-4 m-4">
+                <div className="flex flex-col gap-4 m-4">
                   <p>Supplying your own keys:</p>
                   <p>
-                    {redirectUri()} needs be added to Authorized Javascript URIs
+                    {redirectUri} needs be added to Authorized Javascript URIs
                   </p>
                   <div>
                     <Input
                       placeholder="Client ID"
-                      value={clientId()}
-                      onChange={(e) => {
-                        const value = e.currentTarget.value;
+                      value={clientId}
+                      onChange={(e: any) => {
+                        const value = (e.target as HTMLInputElement).value;
                         setClientId(value);
                       }}
                     />
                     <Input
                       type="password"
                       placeholder="Client Secret"
-                      value={clientSecret()}
-                      onChange={(e) => {
-                        const value = e.currentTarget.value;
+                      value={clientSecret}
+                      onChange={(e: any) => {
+                        const value = (e.target as HTMLInputElement).value;
                         setClientSecret(value);
                       }}
                     />
                   </div>
-                  <div class="flex gap-2">
+                  <div className="flex gap-2">
                     <Button onClick={onSaveKeys}>Save</Button>
                     <Button variant="destructive" onClick={onClearKeys}>
                       Clear
